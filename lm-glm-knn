@@ -1,0 +1,469 @@
+###################################################################################
+R Code Samples for linear Regression and classification Models
+##################################################################################
+
+2^P P - No of Predictors
+
+library(ISLR)
+Advt
+lm.fit=lm(advt$Sales~advt$TV+advt$Radio+advt$paper, data=advt)
+> summary(lm.fit)
+
+Call:
+lm(formula = advt$Sales ~ advt$TV + advt$Radio + advt$paper, 
+    data = advt)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-8.8277 -0.8908  0.2418  1.1893  2.8292 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  2.938889   0.311908   9.422   <2e-16 ***
+advt$TV      0.045765   0.001395  32.809   <2e-16 ***
+advt$Radio   0.188530   0.008611  21.893   <2e-16 ***
+advt$paper  -0.001037   0.005871  -0.177     0.86    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 1.686 on 196 degrees of freedom
+Multiple R-squared:  0.8972,	Adjusted R-squared:  0.8956 
+F-statistic: 570.3 on 3 and 196 DF,  p-value: < 2.2e-16
+
+> lm.fit1=lm(advt$Sales~advt$TV+advt$Radio, data=advt)
+> summary(lm.fit1)
+
+Call:
+lm(formula = advt$Sales ~ advt$TV + advt$Radio, data = advt)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-8.7977 -0.8752  0.2422  1.1708  2.8328 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  2.92110    0.29449   9.919   <2e-16 ***
+advt$TV      0.04575    0.00139  32.909   <2e-16 ***
+advt$Radio   0.18799    0.00804  23.382   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 1.681 on 197 degrees of freedom
+Multiple R-squared:  0.8972,	Adjusted R-squared:  0.8962 
+F-statistic: 859.6 on 2 and 197 DF,  p-value: < 2.2e-16
+
+> anova(lm.fit, lm.fit1)
+Analysis of Variance Table
+
+Model 1: advt$Sales ~ advt$TV + advt$Radio + advt$paper
+Model 2: advt$Sales ~ advt$TV + advt$Radio
+  Res.Df    RSS Df Sum of Sq      F Pr(>F)
+1    196 556.83                           
+2    197 556.91 -1 -0.088717 0.0312 0.8599
+> lm.fit2=lm(advt$Sales~advt$TV, data=advt)
+> summary(lm.fit2)
+
+Call:
+lm(formula = advt$Sales ~ advt$TV, data = advt)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-8.3860 -1.9545 -0.1913  2.0671  7.2124 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 7.032594   0.457843   15.36   <2e-16 ***
+advt$TV     0.047537   0.002691   17.67   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 3.259 on 198 degrees of freedom
+Multiple R-squared:  0.6119,	Adjusted R-squared:  0.6099 
+F-statistic: 312.1 on 1 and 198 DF,  p-value: < 2.2e-16
+
+> anova(lm.fit, lm.fit1, lm.fit2)
+Analysis of Variance Table
+
+Model 1: advt$Sales ~ advt$TV + advt$Radio + advt$paper
+Model 2: advt$Sales ~ advt$TV + advt$Radio
+Model 3: advt$Sales ~ advt$TV
+  Res.Df     RSS Df Sum of Sq        F Pr(>F)    
+1    196  556.83                                 
+2    197  556.91 -1     -0.09   0.0312 0.8599    
+3    198 2102.53 -1  -1545.62 544.0501 <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> lm.fit3=lm(advt$Sales~advt$Radio, data=advt)
+> summary(lm.fit3)
+
+Call:
+lm(formula = advt$Sales ~ advt$Radio, data = advt)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-15.7305  -2.1324   0.7707   2.7775   8.1810 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  9.31164    0.56290  16.542   <2e-16 ***
+advt$Radio   0.20250    0.02041   9.921   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 4.275 on 198 degrees of freedom
+Multiple R-squared:  0.332,	Adjusted R-squared:  0.3287 
+F-statistic: 98.42 on 1 and 198 DF,  p-value: < 2.2e-16
+
+> lm.fit4=lm(advt$Sales~advt$TV+advt$Radio+poly(advt$TV,5), data=advt)
+> summary(lm.fit4)
+
+Call:
+lm(formula = advt$Sales ~ advt$TV + advt$Radio + poly(advt$TV, 
+    5), data = advt)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.6903 -0.7584  0.0778  0.7634  3.9642 
+
+Coefficients: (1 not defined because of singularities)
+                    Estimate Std. Error t value Pr(>|t|)    
+(Intercept)         2.755735   0.244954  11.250  < 2e-16 ***
+advt$TV             0.045683   0.001152  39.659  < 2e-16 ***
+advt$Radio          0.195555   0.006736  29.033  < 2e-16 ***
+poly(advt$TV, 5)1         NA         NA      NA       NA    
+poly(advt$TV, 5)2 -10.386699   1.400294  -7.418 3.69e-12 ***
+poly(advt$TV, 5)3   7.366799   1.397749   5.270 3.62e-07 ***
+poly(advt$TV, 5)4  -3.627408   1.393673  -2.603  0.00997 ** 
+poly(advt$TV, 5)5   3.101968   1.395774   2.222  0.02742 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 1.393 on 193 degrees of freedom
+Multiple R-squared:  0.9309,	Adjusted R-squared:  0.9287 
+F-statistic: 433.1 on 6 and 193 DF,  p-value: < 2.2e-16
+
+> lm.fit5=lm(advt$Sales~poly(advt$TV,5), data=advt)
+> summary(lm.fit5)
+
+Call:
+lm(formula = advt$Sales ~ poly(advt$TV, 5), data = advt)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-8.024 -1.789 -0.203  1.830  7.601 
+
+Coefficients:
+                  Estimate Std. Error t value Pr(>|t|)    
+(Intercept)        14.0225     0.2276  61.608   <2e-16 ***
+poly(advt$TV, 5)1  57.5727     3.2188  17.886   <2e-16 ***
+poly(advt$TV, 5)2  -6.2288     3.2188  -1.935   0.0544 .  
+poly(advt$TV, 5)3   4.0074     3.2188   1.245   0.2146    
+poly(advt$TV, 5)4  -2.3262     3.2188  -0.723   0.4708    
+poly(advt$TV, 5)5   5.6776     3.2188   1.764   0.0793 .  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 3.219 on 194 degrees of freedom
+Multiple R-squared:  0.629,	Adjusted R-squared:  0.6194 
+F-statistic: 65.77 on 5 and 194 DF,  p-value: < 2.2e-16
+
+> lm.fit6=lm(advt$Sales~advt$TV+advt$Radio+poly(advt$TV,2), data=advt)
+> summary(lm.fit6)
+
+Call:
+lm(formula = advt$Sales ~ advt$TV + advt$Radio + poly(advt$TV, 
+    2), data = advt)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-7.3860 -0.8822 -0.0498  0.9613  3.5725 
+
+Coefficients: (1 not defined because of singularities)
+                    Estimate Std. Error t value Pr(>|t|)    
+(Intercept)         2.811234   0.266255  10.558  < 2e-16 ***
+advt$TV             0.045707   0.001255  36.428  < 2e-16 ***
+advt$Radio          0.193018   0.007293  26.465  < 2e-16 ***
+poly(advt$TV, 2)1         NA         NA      NA       NA    
+poly(advt$TV, 2)2 -10.332743   1.525239  -6.775 1.42e-10 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 1.517 on 196 degrees of freedom
+Multiple R-squared:  0.9167,	Adjusted R-squared:  0.9154 
+F-statistic:   719 on 3 and 196 DF,  p-value: < 2.2e-16
+
+> lm.fit7=lm(advt$Sales~advt$TV+advt$Radio+poly(advt$TV,8), data=advt)
+> summary(lm.fit7)
+
+Call:
+lm(formula = advt$Sales ~ advt$TV + advt$Radio + poly(advt$TV, 
+    8), data = advt)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.3932 -0.7796  0.0781  0.7205  4.0222 
+
+Coefficients: (1 not defined because of singularities)
+                    Estimate Std. Error t value Pr(>|t|)    
+(Intercept)         2.727506   0.240997  11.318  < 2e-16 ***
+advt$TV             0.045671   0.001132  40.332  < 2e-16 ***
+advt$Radio          0.196846   0.006636  29.662  < 2e-16 ***
+poly(advt$TV, 8)1         NA         NA      NA       NA    
+poly(advt$TV, 8)2 -10.414142   1.376586  -7.565 1.62e-12 ***
+poly(advt$TV, 8)3   7.388972   1.374072   5.377 2.20e-07 ***
+poly(advt$TV, 8)4  -3.635997   1.370047  -2.654  0.00863 ** 
+poly(advt$TV, 8)5   3.084968   1.372122   2.248  0.02570 *  
+poly(advt$TV, 8)6  -1.711939   1.369486  -1.250  0.21282    
+poly(advt$TV, 8)7   2.894596   1.369992   2.113  0.03592 *  
+poly(advt$TV, 8)8  -2.641522   1.371613  -1.926  0.05562 .  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 1.369 on 190 degrees of freedom
+Multiple R-squared:  0.9342,	Adjusted R-squared:  0.9311 
+F-statistic: 299.9 on 9 and 190 DF,  p-value: < 2.2e-16
+
+> lm.fit8=lm(advt$Sales~advt$TV+advt$Radio+poly(advt$TV,1), data=advt)
+> summary(lm.fit8)
+
+Call:
+lm(formula = advt$Sales ~ advt$TV + advt$Radio + poly(advt$TV, 
+    1), data = advt)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-8.7977 -0.8752  0.2422  1.1708  2.8328 
+
+Coefficients: (1 not defined because of singularities)
+                 Estimate Std. Error t value Pr(>|t|)    
+(Intercept)       2.92110    0.29449   9.919   <2e-16 ***
+advt$TV           0.04575    0.00139  32.909   <2e-16 ***
+advt$Radio        0.18799    0.00804  23.382   <2e-16 ***
+poly(advt$TV, 1)       NA         NA      NA       NA    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 1.681 on 197 degrees of freedom
+Multiple R-squared:  0.8972,	Adjusted R-squared:  0.8962 
+F-statistic: 859.6 on 2 and 197 DF,  p-value: < 2.2e-16
+
+> Analysis of R2 for all different Models
+R2 	Model
+0.89	lm.fit8
+0.93	lm.fit7
+0.91	lm.fit6
+0.62	lm.fit5
+0.93	lm.fit4
+0.33	lm.fit3
+0.61	lm.fit2
+0.89	lm.fit1
+
+lm.probs=predict(lm.fit8, interval="confidence")
+
+> which.max(lm.probs)
+176 
+
+lm.probs[170:176]
+      170       171       172       173       174       175       176 
+17.921933  7.389574 14.376846  7.596578 11.960970 13.736151 24.783526 
+> 
+
+ADVT # 176
+	TV Radio Paper Sales
+176 276.9  48.9  41.8  27.0
+
+Model # lm.fit8
+data set# TV#276.9, Radio# 48.9 will be the right model fit to recommend.
+
+> advt
+    cf0    TV Radio paper Sales
+1     1 230.1  37.8  69.2  22.1
+2     2  44.5  39.3  45.1  10.4
+3     3  17.2  45.9  69.3   9.3
+4     4 151.5  41.3  58.5  18.5
+5     5 180.8  10.8  58.4  12.9
+##############################################
+
+# library command to load MASS library, which has Boston dataset, quantitative dataset
+library(MASS)
+# names command will list the names of the filed in Boston dataset
+names(Boston)
+dim(Boston)
+# Help to know more
+?Boston 
+lm.fit = lm(Boston$medv~Boston$lstat, data=Boston)
+summary(lm.fit)
+# names command will help you to find other information of lm.fit
+names(lm.fit)
+# Coef command will help to find coefficients and other intercepts
+coef (lm.fit)
+# confidend Interval for Coeffecients in lm.fit model
+confint(lm.fit)
+#Predict command will predict the right fit 
+predict(lm.fit, data(lstat, c(5,10,15)), interval="confidence", level=.99)
+predict(lm.fit, data(lstat, c(5,10,15)), interval="prediction", level=.99)
+#summary to see the lm.fit model coefficients and other info (RSS, R2)
+Summary(lm.fit)
+
+# Mulitple linear regression, add more predcitors/ variables to see the response
+lm.fit1 = lm(Boston$medv~., data=Boston)
+summary (lm.fit1)
+
+# improved model with removal of non-related variables and investigate RSS, R2, Adj R2 etc with 1 or many variables and see which makes sense and not.
+lm.fit1 = lm(Boston$medv~. -zn -indus -chas -rm -age -rad -black -nos, data=Boston)
+summary (lm.fit1)
+
+Interactive Terms on Variables to fit the model
+lm.fit2 = lm(Boston$medv~Boston$lstat + Boston$lstat * Boston$age, data=Boston)
+summary(lm.fit2)
+
+#Non Linear transformations or Polynomial way of distribution of Variables (raise to power of variables)
+lm.fit3 = lm(Boston$medv~Boston$lstat + ploy(Boston$lstat, 5), data=Boston)
+summary(lm.fit3)
+
+##############################################################################################
+KNN using Smarket Train and Test Data - Qualitative to find the Direction (Smarket$Direction Predict to find Up or Down)
+##############################################################################################
+
+dim(train)
+NULL
+train=Smarket$Year<2005
+names(train)
+NULL
+ dim(train)
+NULL
+train
+Smarket.2005= Smarket[!train,]
+dim(Smarket.2005)
+[1] 252   9
+Direction.2005=Smarket$Direction[!train]
+ dim(Direction.2005)
+NULL
+Direction.2005
+ [1] Down Down Down Up   Down Up   Down Up   Down Up   Up   Down Down Down Down Up   Up   Up   Down Up   Up   Up   Down Up   Down Up   Down Up  
+ 225] Up   Up   Up   Up   Down Up   Down Up   Up   Down Up   Down Down Up   Up   Up   Up   Down Down Down Down Up   Up   Up   Down Up   Down Down
+Levels: Down Up
+dim(Direction.2005 == "Up")
+NULL
+
+library (class)
+train.X = cbind(Smarket$Lag1, Smarket$Lag2) [train,]
+test.X = cbind(Smarket$Lag1, Smarket$Lag2)[!train,]
+train.Direction=Smarket$Direction[train]
+dim(train.X)
+[1] 998   2
+dim(test.X)
+[1] 252   2
+dim(Smarket$Direction[train])
+NULL
+knn.pred=knn(train.X, test.X, train.Direction, k=1)
+table(knn.pred, Direction.2005)
+        Direction.2005
+knn.pred Down Up
+    Down   43 58
+    Up     68 83
+mean(knn.pred == Direction.2005)
+[1] 0.5
+knn.pred3 = knn(train.X, test.X, train.Direction, k=3)
+table(knn.pred3, Direction.2005)
+         Direction.2005
+knn.pred3 Down Up
+     Down   48 54
+     Up     63 87
+mean(knn.pred3 == Direction.2005)
+[1] 0.5357143
+
+## Caravan Insurance Dataset to model with KNN Technique to predict its Purchase Probability
+
+> library(ISLR)
+> dim(Caravan)
+[1] 5822   86
+> summary(Caravan$Purchase)
+  No  Yes 
+5474  348 
+> standardized.X = scale(Caravan[,86])
+Error in colMeans(x, na.rm = TRUE) : 'x' must be numeric
+> standardized.X = scale(Caravan[,-86])
+> var(Caravan[,1])
+[1] 165.0378
+> var(Caravan[,2])
+[1] 0.1647078
+> var(standardized.X[,1])
+[1] 1
+> var(standardized.X[,2])
+[1] 1
+> test=1:1000
+> train.X=standardized.X[-test,]
+> test.X=standardized.X[test,]
+> train.Y=Caravan$Purchase[-test]
+> test.Y = Caravan$Purchase[test]
+> 
+> knn.pred = knn(train.X, test.X, train.Y, k=1)
+Error: could not find function "knn"
+> library(class)
+> knn.pred = knn(train.X, test.X, train.Y, k=1)
+> mean(knn.pred == test.Y)
+[1] 0.883
+> mean(knn.pred != test.Y)
+[1] 0.117
+> mean(test.Y != knn.pred)
+[1] 0.117
+> mean(test.Y != "No")
+[1] 0.059
+> knn.pred3 = knn(train.X, test.X, train.Y, k=3)
+> mean(knn.pred3 != test.Y)
+[1] 0.074
+> table(knn.pred3, test.Y)
+         test.Y
+knn.pred3  No Yes
+      No  921  54
+      Yes  20   5
+
+> standardized.X = scale(Caravan[,-86])
+> var(Caravan[,1])
+[1] 165.0378
+> var(Caravan[,2])
+[1] 0.1647078
+> var(standardized.X[,1])
+[1] 1
+> var(standardized.X[,2])
+[1] 1
+> test=1:1000
+> train.X=standardized.X[-test,]
+> test.X=standardized.X[test,]
+> train.Y=Caravan$Purchase[-test]
+> test.Y = Caravan$Purchase[test]
+> 
+> knn.pred = knn(train.X, test.X, train.Y, k=1)
+Error: could not find function "knn"
+> library(class)
+> knn.pred = knn(train.X, test.X, train.Y, k=1)
+> mean(knn.pred == test.Y)
+[1] 0.883
+> mean(knn.pred != test.Y)
+[1] 0.117
+> mean(test.Y != knn.pred)
+[1] 0.117
+> mean(test.Y != "No")
+[1] 0.059
+
+> knn.pred3 = knn(train.X, test.X, train.Y, k=3)
+> mean(knn.pred3 != test.Y)
+[1] 0.074
+> table(knn.pred3, test.Y)
+         test.Y
+knn.pred3  No Yes
+      No  921  54
+      Yes  20   5
+> 5/25
+[1] 0.2
+
+> knn.pred5 = knn(train.X, test.X, train.Y, k=5)
+> table(knn.pred5, test.Y)
+         test.Y
+knn.pred5  No Yes
+      No  930  55
+      Yes  11   4
+> 4/15
+[1] 0.2666667
+
