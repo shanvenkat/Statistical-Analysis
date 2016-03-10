@@ -1,0 +1,46 @@
+A GLM Model to run against Caravan Insurance Data Set to predict % of Purchase chances
+
+> library(ISLR)
+> test=1:1000
+> dim(Caravan)
+[1] 5822   86
+> names(Caravan)
+ [1] "MOSTYPE"  "MAANTHUI" "MGEMOMV"  "MGEMLEEF" "MOSHOOFD" "MGODRK"   "MGODPR"   "MGODOV"   "MGODGE"   "MRELGE"  
+[11] "MRELSA"   "MRELOV"   "MFALLEEN" "MFGEKIND" "MFWEKIND" "MOPLHOOG" "MOPLMIDD" "MOPLLAAG" "MBERHOOG" "MBERZELF"
+[21] "MBERBOER" "MBERMIDD" "MBERARBG" "MBERARBO" "MSKA"     "MSKB1"    "MSKB2"    "MSKC"     "MSKD"     "MHHUUR"  
+[31] "MHKOOP"   "MAUT1"    "MAUT2"    "MAUT0"    "MZFONDS"  "MZPART"   "MINKM30"  "MINK3045" "MINK4575" "MINK7512"
+[41] "MINK123M" "MINKGEM"  "MKOOPKLA" "PWAPART"  "PWABEDR"  "PWALAND"  "PPERSAUT" "PBESAUT"  "PMOTSCO"  "PVRAAUT" 
+[51] "PAANHANG" "PTRACTOR" "PWERKT"   "PBROM"    "PLEVEN"   "PPERSONG" "PGEZONG"  "PWAOREG"  "PBRAND"   "PZEILPL" 
+[61] "PPLEZIER" "PFIETS"   "PINBOED"  "PBYSTAND" "AWAPART"  "AWABEDR"  "AWALAND"  "APERSAUT" "ABESAUT"  "AMOTSCO" 
+[71] "AVRAAUT"  "AAANHANG" "ATRACTOR" "AWERKT"   "ABROM"    "ALEVEN"   "APERSONG" "AGEZONG"  "AWAOREG"  "ABRAND"  
+[81] "AZEILPL"  "APLEZIER" "AFIETS"   "AINBOED"  "ABYSTAND" "Purchase"
+> dim(Caravan$Purchase)
+NULL
+> summary(Caravan$Purchase)
+  No  Yes 
+5474  348 
+> test.Y= Caravan$Purchase[test]
+> glm.fit = glm(Caravan$Purchase ~., data=Caravan, subset=-test, family=binomial)
+Warning message:
+glm.fit: fitted probabilities numerically 0 or 1 occurred 
+> glm.probs = predict(glm.fit, Caravan[test,], type="response")
+> glm.pred = rep("No", 1000)
+> glm.pred[glm.probs>0.5] = "Yes"
+> table (glm.pred, test.Y)
+        test.Y
+glm.pred  No Yes
+     No  934  59
+     Yes   7   0
+> mean(glm.pred == test.Y)
+[1] 0.934
+> glm.pred = rep("No", 1000)
+> glm.pred[glm.probs>0.25] = "Yes"
+> table (glm.pred, test.Y)
+        test.Y
+glm.pred  No Yes
+     No  919  48
+     Yes  22  11
+> mean(glm.pred == test.Y)
+[1] 0.93
+> 11/33
+[1] 0.3333333
