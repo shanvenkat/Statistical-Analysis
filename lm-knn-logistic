@@ -1,0 +1,188 @@
+# library command to load MASS library, which has Boston dataset, quantitative dataset
+library(MASS)
+
+# names command will list the names of the filed in Boston dataset
+names(Boston)
+dim(Boston)
+# Help to know more
+?Boston 
+lm.fit = lm(Boston$medv~Boston$lstat, data=Boston)
+summary(lm.fit)
+
+# names command will help you to find other information of lm.fit
+names(lm.fit)
+
+# Coef command will help to find coefficients and other intercepts
+coef (lm.fit)
+# confidend Interval for Coeffecients in lm.fit model
+confint(lm.fit)
+
+#Predict command will predict the right fit 
+predict(lm.fit, data(lstat, c(5,10,15)), interval="confidence", level=.99)
+predict(lm.fit, data(lstat, c(5,10,15)), interval="prediction", level=.99)
+#summary to see the lm.fit model coefficients and other info (RSS, R2)
+Summary(lm.fit)
+
+# Mulitple linear regression, add more predcitors/ variables to see the response
+lm.fit1 = lm(Boston$medv~., data=Boston)
+summary (lm.fit1)
+
+# improved model with removal of non-related variables and investigate RSS, R2, Adj R2 etc with 1 or many variables and see which makes sense and not.
+lm.fit1 = lm(Boston$medv~. -zn -indus -chas -rm -age -rad -black -nos, data=Boston)
+summary (lm.fit1)
+
+Interactive Terms on Variables to fit the model
+lm.fit2 = lm(Boston$medv~Boston$lstat + Boston$lstat * Boston$age, data=Boston)
+summary(lm.fit2)
+
+#Non Linear transformations or Polynomial way of distribution of Variables (raise to power of variables)
+lm.fit3 = lm(Boston$medv~Boston$lstat + ploy(Boston$lstat, 5), data=Boston)
+summary(lm.fit3)
+
+
+##############################################################################################
+KNN using Smarket Train and Test Data - Qualitative to find the Direction (Smarket$Direction Predict to find Up or Down)
+##############################################################################################
+
+dim(train)
+NULL
+train=Smarket$Year<2005
+names(train)
+NULL
+ dim(train)
+NULL
+train
+Smarket.2005= Smarket[!train,]
+dim(Smarket.2005)
+[1] 252   9
+Direction.2005=Smarket$Direction[!train]
+ dim(Direction.2005)
+NULL
+Direction.2005
+ [1] Down Down Down Up   Down Up   Down Up   Down Up   Up   Down Down Down Down Up   Up   Up   Down Up   Up   Up   Down Up   Down Up   Down Up  
+ 225] Up   Up   Up   Up   Down Up   Down Up   Up   Down Up   Down Down Up   Up   Up   Up   Down Down Down Down Up   Up   Up   Down Up   Down Down
+Levels: Down Up
+dim(Direction.2005 == "Up")
+NULL
+
+library (class)
+train.X = cbind(Smarket$Lag1, Smarket$Lag2) [train,]
+test.X = cbind(Smarket$Lag1, Smarket$Lag2)[!train,]
+train.Direction=Smarket$Direction[train]
+dim(train.X)
+[1] 998   2
+dim(test.X)
+[1] 252   2
+dim(Smarket$Direction[train])
+NULL
+knn.pred=knn(train.X, test.X, train.Direction, k=1)
+table(knn.pred, Direction.2005)
+        Direction.2005
+knn.pred Down Up
+    Down   43 58
+    Up     68 83
+mean(knn.pred == Direction.2005)
+[1] 0.5
+knn.pred3 = knn(train.X, test.X, train.Direction, k=3)
+table(knn.pred3, Direction.2005)
+         Direction.2005
+knn.pred3 Down Up
+     Down   48 54
+     Up     63 87
+mean(knn.pred3 == Direction.2005)
+[1] 0.5357143
+
+## Caravan Insurance Dataset to model with KNN Technique to predict its Purchase Probability
+
+> library(ISLR)
+> dim(Caravan)
+[1] 5822   86
+> summary(Caravan$Purchase)
+  No  Yes 
+5474  348 
+> standardized.X = scale(Caravan[,86])
+Error in colMeans(x, na.rm = TRUE) : 'x' must be numeric
+> standardized.X = scale(Caravan[,-86])
+> var(Caravan[,1])
+[1] 165.0378
+> var(Caravan[,2])
+[1] 0.1647078
+> var(standardized.X[,1])
+[1] 1
+> var(standardized.X[,2])
+[1] 1
+> test=1:1000
+> train.X=standardized.X[-test,]
+> test.X=standardized.X[test,]
+> train.Y=Caravan$Purchase[-test]
+> test.Y = Caravan$Purchase[test]
+> 
+> knn.pred = knn(train.X, test.X, train.Y, k=1)
+Error: could not find function "knn"
+> library(class)
+> knn.pred = knn(train.X, test.X, train.Y, k=1)
+> mean(knn.pred == test.Y)
+[1] 0.883
+> mean(knn.pred != test.Y)
+[1] 0.117
+> mean(test.Y != knn.pred)
+[1] 0.117
+> mean(test.Y != "No")
+[1] 0.059
+> knn.pred3 = knn(train.X, test.X, train.Y, k=3)
+> mean(knn.pred3 != test.Y)
+[1] 0.074
+> table(knn.pred3, test.Y)
+         test.Y
+knn.pred3  No Yes
+      No  921  54
+      Yes  20   5
+
+> standardized.X = scale(Caravan[,-86])
+> var(Caravan[,1])
+[1] 165.0378
+> var(Caravan[,2])
+[1] 0.1647078
+> var(standardized.X[,1])
+[1] 1
+> var(standardized.X[,2])
+[1] 1
+> test=1:1000
+> train.X=standardized.X[-test,]
+> test.X=standardized.X[test,]
+> train.Y=Caravan$Purchase[-test]
+> test.Y = Caravan$Purchase[test]
+> 
+> knn.pred = knn(train.X, test.X, train.Y, k=1)
+Error: could not find function "knn"
+> library(class)
+> knn.pred = knn(train.X, test.X, train.Y, k=1)
+> mean(knn.pred == test.Y)
+[1] 0.883
+> mean(knn.pred != test.Y)
+[1] 0.117
+> mean(test.Y != knn.pred)
+[1] 0.117
+> mean(test.Y != "No")
+[1] 0.059
+
+> knn.pred3 = knn(train.X, test.X, train.Y, k=3)
+> mean(knn.pred3 != test.Y)
+[1] 0.074
+> table(knn.pred3, test.Y)
+         test.Y
+knn.pred3  No Yes
+      No  921  54
+      Yes  20   5
+> 5/25
+[1] 0.2
+
+> knn.pred5 = knn(train.X, test.X, train.Y, k=5)
+> table(knn.pred5, test.Y)
+         test.Y
+knn.pred5  No Yes
+      No  930  55
+      Yes  11   4
+> 4/15
+[1] 0.2666667
+
