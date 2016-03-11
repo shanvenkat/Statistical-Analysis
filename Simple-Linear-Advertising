@@ -4,8 +4,14 @@ R Code Samples for linear Regression and classification Models
 
 2^P P - No of Predictors
 
+# Load ISLR Library to have basic dataset
 library(ISLR)
-Advt
+advt=read.csv("~/Downloads/Advertising.csv", header=T)
+# Dimensions
+dim(advt)
+[1] 200 ,5
+
+# lm model to fitS
 lm.fit=lm(advt$Sales~advt$TV+advt$Radio+advt$paper, data=advt)
 > summary(lm.fit)
 
@@ -283,5 +289,4 @@ data set# TV#276.9, Radio# 48.9 will be the right model fit to recommend.
 4     4 151.5  41.3  58.5  18.5
 5     5 180.8  10.8  58.4  12.9
 
-##############################################
-
+#############################################
