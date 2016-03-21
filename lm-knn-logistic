@@ -40,58 +40,6 @@ lm.fit3 = lm(Boston$medv~Boston$lstat + ploy(Boston$lstat, 5), data=Boston)
 summary(lm.fit3)
 
 
-##############################################################################################
-KNN using Smarket Train and Test Data - Qualitative to find the Direction (Smarket$Direction Predict to find Up or Down)
-##############################################################################################
-
-dim(train)
-NULL
-train=Smarket$Year<2005
-names(train)
-NULL
- dim(train)
-NULL
-train
-Smarket.2005= Smarket[!train,]
-dim(Smarket.2005)
-[1] 252   9
-Direction.2005=Smarket$Direction[!train]
- dim(Direction.2005)
-NULL
-Direction.2005
- [1] Down Down Down Up   Down Up   Down Up   Down Up   Up   Down Down Down Down Up   Up   Up   Down Up   Up   Up   Down Up   Down Up   Down Up  
- 225] Up   Up   Up   Up   Down Up   Down Up   Up   Down Up   Down Down Up   Up   Up   Up   Down Down Down Down Up   Up   Up   Down Up   Down Down
-Levels: Down Up
-dim(Direction.2005 == "Up")
-NULL
-
-library (class)
-train.X = cbind(Smarket$Lag1, Smarket$Lag2) [train,]
-test.X = cbind(Smarket$Lag1, Smarket$Lag2)[!train,]
-train.Direction=Smarket$Direction[train]
-dim(train.X)
-[1] 998   2
-dim(test.X)
-[1] 252   2
-dim(Smarket$Direction[train])
-NULL
-knn.pred=knn(train.X, test.X, train.Direction, k=1)
-table(knn.pred, Direction.2005)
-        Direction.2005
-knn.pred Down Up
-    Down   43 58
-    Up     68 83
-mean(knn.pred == Direction.2005)
-[1] 0.5
-knn.pred3 = knn(train.X, test.X, train.Direction, k=3)
-table(knn.pred3, Direction.2005)
-         Direction.2005
-knn.pred3 Down Up
-     Down   48 54
-     Up     63 87
-mean(knn.pred3 == Direction.2005)
-[1] 0.5357143
-
 ## Caravan Insurance Dataset to model with KNN Technique to predict its Purchase Probability
 
 > library(ISLR)
