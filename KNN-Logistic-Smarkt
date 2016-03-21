@@ -1,0 +1,105 @@
+##############################################################################################
+KNN using Smarket Data Set, Partition as Train and Test Data - Qualitative to find the market movement either UP or DOWN Direction (Smarket$Direction to find Up or Down)
+##############################################################################################
+
+> library(ISLR)
+
+> names(Smarket)
+[1] "Year"      "Lag1"      "Lag2"      "Lag3"      "Lag4"      "Lag5"      "Volume"    "Today"    
+[9] "Direction"
+> dim(Smarket)
+[1] 1250    9
+> 
+> summary(Smarket)
+      Year           Lag1                Lag2                Lag3                Lag4          
+ Min.   :2001   Min.   :-4.922000   Min.   :-4.922000   Min.   :-4.922000   Min.   :-4.922000  
+ 1st Qu.:2002   1st Qu.:-0.639500   1st Qu.:-0.639500   1st Qu.:-0.640000   1st Qu.:-0.640000  
+ Median :2003   Median : 0.039000   Median : 0.039000   Median : 0.038500   Median : 0.038500  
+ Mean   :2003   Mean   : 0.003834   Mean   : 0.003919   Mean   : 0.001716   Mean   : 0.001636  
+ 3rd Qu.:2004   3rd Qu.: 0.596750   3rd Qu.: 0.596750   3rd Qu.: 0.596750   3rd Qu.: 0.596750  
+ Max.   :2005   Max.   : 5.733000   Max.   : 5.733000   Max.   : 5.733000   Max.   : 5.733000  
+      Lag5              Volume           Today           Direction 
+ Min.   :-4.92200   Min.   :0.3561   Min.   :-4.922000   Down:602  
+ 1st Qu.:-0.64000   1st Qu.:1.2574   1st Qu.:-0.639500   Up  :648  
+ Median : 0.03850   Median :1.4229   Median : 0.038500             
+ Mean   : 0.00561   Mean   :1.4783   Mean   : 0.003138             
+ 3rd Qu.: 0.59700   3rd Qu.:1.6417   3rd Qu.: 0.596750             
+ Max.   : 5.73300   Max.   :3.1525   Max.   : 5.733000             
+> 
+
+# Train Subset Data, Data(1)
+> train=Smarket$Year < 2005
+> summary(train)
+   Mode   FALSE    TRUE    NA's 
+logical     252     998       0 
+> names(train)
+NULL
+> summary(!test)
+Error in summary(!test) : object 'test' not found
+
+# Test Data Set , Data (2)
+> test=!train
+> summary(test)
+   Mode   FALSE    TRUE    NA's 
+logical     998     252       0
+
+# Apply Train frequency to Direction column. Data(3) 
+> train.Direction = Smarket$Direction[train]
+
+> summary(train.Direction)
+Down   Up 
+ 491  507 
+# Apply Test Frequency to Smarket$Direction column Data(4)
+> test.Direction = Smarket$Direction[!train]
+
+> test.Direction
+[1] Down Down Down Up   Down Up   Down Up   Down Up   Up   Down Down Down Down Up   Up   Up   Down Up   Up   Up   Down Up   Down Up   Down Up  
+ 225] Up   Up   Up   Up   Down Up   Down Up   Up   Down Up   Down Down Up   Up   Up   Up   Down Down Down Down Up   Up   Up   Down Up   Down Down
+
+> summary(test.Direction)
+Down   Up 
+ 111  141 
+# Prepare column Bind Matrix for KNN Model with 2 Smarket$Lag1, Smarket$Lag2 columns
+# train.x, test.x are 2 matrices with 2 column variables
+> train.x = cbind(Smarket$Lag1, Smarket$Lag2)[train,]
+> test.x = cbind(Smarket$Lag1, Smarket$Lag2)[!train,]
+> dim(train.x)
+[1] 998   2
+> dim(test.x)
+[1] 252   2
+> summary(train.Direction)
+Down   Up 
+ 491  507 
+> knn.pred = knn(train.x, test.x, train.Direction, k=1)
+Error: could not find function "knn"
+
+# Class Package Dependency
+> library(class)
+
+# KNN Model K=1 prepared
+> knn.pred = knn(train.x, test.x, train.Direction, k=1)
+
+#Applied KNN Model to Other Set of Data, test.Direction , K=1
+> table(knn.pred, test.Direction)
+        test.Direction
+knn.pred Down Up
+    Down   43 58
+    Up     68 83
+
+# Probability of Smarket$Direction is 50%
+> mean ( knn.pred == test.Direction)
+[1] 0.5
+> 
+
+# KNN Model K=3 prepared
+> knn.pred3 = knn(train.x, test.x, train.Direction, k=3)
+
+#Applied KNN Model to Other Set of Data, test.Direction , K=3
+> table(knn.pred3, test.Direction)
+         test.Direction
+knn.pred3 Down Up
+     Down   48 56
+     Up     63 85
+> mean ( knn.pred3 == test.Direction)
+[1] 0.5277778
+> 
