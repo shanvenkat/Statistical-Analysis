@@ -2,7 +2,7 @@
 R Code Samples for linear Regression and classification Models
 ##################################################################################
 
-2^P P - No of Predictors
+Total Number of models = 2^P  (P - No of Predictors)
 
 # Load ISLR Library to have basic dataset
 library(ISLR)
