@@ -1,0 +1,164 @@
+###################################################################################
+Ridge and Lasso regression using GLMNET, MATRIX Package
+Ridge and lasso helps to reduce the variables coefficients to Zero.
+Ridge helps to reduce to low levelm but lasso helps to  reduce to zero level.
+This reduction helps to handle Variance-bias relation in control, which helps to do accurate prediction
+Following Model applies to Hitters data set, 263 Observations and 20 Predictors
+##################################################################################
+
+# Call to ISLR Library
+> library(ISLR)
+
+# filter dummy data from Hitters dataset
+> Hitters=na.omit(Hitters)
+# X column, 20 Predictors,
+> x=model.matrix(Hitters$Salary~., Hitters)
+> x=model.matrix(Hitters$Salary~., Hitters)[,-1]
+# Y Response column , Hitters$Salary
+> y=Hitters$Salary
+#Call Library GLMNET, dependency # Matix, llapack, lbas etc
+> library(glmnet)
+Loading required package: Matrix
+Loading required package: foreach
+foreach: simple, scalable parallel programming from Revolution Analytics
+Use Revolution R for scalability, fault tolerance and more.
+http://www.revolutionanalytics.com
+Loaded glmnet 2.0-5
+
+# Prepare a grid matrix
+> grid=10^seq(10,-2, length=100)
+# Prepare a ridge Model, lambda is the Tunning Variable here, helps to reduce coefficient of variables., alpha =0 for ridge, alpha=1 = lasso
+
+> ridge.mod=glmnet(x,y, alpha = 0, lambda = grid)
+> summary(ridge.mod)
+          Length Class     Mode   
+a0         100   -none-    numeric
+beta      1900   dgCMatrix S4     
+df         100   -none-    numeric
+dim          2   -none-    numeric
+lambda     100   -none-    numeric
+dev.ratio  100   -none-    numeric
+nulldev      1   -none-    numeric
+npasses      1   -none-    numeric
+jerr         1   -none-    numeric
+offset       1   -none-    logical
+call         5   -none-    call   
+nobs         1   -none-    numeric
+> dim(coef(ridge.mod))
+[1]  20 100
+
+> ridge.mod$lambda[50]
+[1] 11497.57
+
+# Variables Coefficients reduce but not to Zero level, Let us test this with LASSO, alpha =1
+> predict(ridge.mod, s=50, type="coefficients")[1:20,]
+  (Intercept)         AtBat          Hits         HmRun          Runs           RBI         Walks 
+ 4.876610e+01 -3.580999e-01  1.969359e+00 -1.278248e+00  1.145892e+00  8.038292e-01  2.716186e+00 
+        Years        CAtBat         CHits        CHmRun         CRuns          CRBI        CWalks 
+-6.218319e+00  5.447837e-03  1.064895e-01  6.244860e-01  2.214985e-01  2.186914e-01 -1.500245e-01 
+      LeagueN     DivisionW       PutOuts       Assists        Errors    NewLeagueN 
+ 4.592589e+01 -1.182011e+02  2.502322e-01  1.215665e-01 -3.278600e+00 -9.496680e+00 
+
+# Break the sample to TRAIN, TEST,  Y.TEST from Response Column (Test with Y Response column)
+> set.seed(1)
+> train=sample(1:nrow(x), nrow(x)/2)
+> length(train)
+[1] 131
+> summary(train)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    2.0    72.0   142.0   137.8   204.0   261.0 
+> test=-train
+> length(test)
+[1] 131
+> summary(test)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ -261.0  -204.0  -142.0  -137.8   -72.0    -2.0 
+
+# Apply test observations to Y Responses
+> y.test=y[test]
+> length(y.test)
+[1] 132
+> summary(y.test)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   67.5   165.0   425.0   524.0   759.4  2412.0 
+
+# Ridge Model with train data
+> ridge.mod = glmnet(x[train,], y[train], alpha = 0, lambda = grid, thresh = 1e-12)
+# Predict Ridge with test data where S=4 , 
+> ridge.pred = predict(ridge.mod, s=4, newx = x[test,])
+# validation against Y.TEST Column
+> mean((ridge.pred-y.test)^2)
+[1] 101036.8
+
+# Predict with Ridge Model, S= 10^10
+> ridge.pred = predict(ridge.mod, s=1e10, newx = x[test,])
+> mean((ridge.pred-y.test)^2)
+[1] 193253.1
+
+# Predict with s=0 (exact = T argument required for s=0)
+> ridge.pred = predict(ridge.mod, s=0, newx = x[test,], exact = T)
+> mean((ridge.pred-y.test)^2)
+[1] 114783.1
+
+#Coefficients of Ridge Variables when Lambda =0, (exact = true argument)
+> predict(ridge.mod, s=0, type="coefficients", exact = T)[1:20,]
+ (Intercept)        AtBat         Hits        HmRun         Runs          RBI        Walks 
+299.42883596  -2.54014665   8.36611719  11.64400720  -9.09877719   2.44152119   9.23403909 
+       Years       CAtBat        CHits       CHmRun        CRuns         CRBI       CWalks 
+-22.93584442  -0.18160843  -0.11561496  -1.33836534   3.32817777   0.07511771  -1.07828647 
+     LeagueN    DivisionW      PutOuts      Assists       Errors   NewLeagueN 
+ 59.76529059 -98.85996590   0.34086400   0.34165605  -0.64205839  -0.67606314 
+
+# Apply Cross validation on TRAIN and TEST data
+> set.seed(1)
+> cv.out=cv.glmnet(x[train,], y[train], alpha=0)
+> bestlam=cv.out$lambda.min
+> bestlam
+[1] 211.7416
+
+# Prediction
+> ridge.pred = predict(ridge.mod, s=bestlam, newx = x[test,])
+> mean((ridge.pred-y.test)^2)
+[1] 96015.51
+
+# Ridge Model Coefficients are close to zero, but not zero. see this comparison with LASSO Coefficients, here Lambda = bestlam, alpha =0 for ridge
+> out=glmnet(x,y, alpha = 0)
+> predict(out, type="coefficients", s=bestlam)[1:20,]
+ (Intercept)        AtBat         Hits        HmRun         Runs          RBI        Walks 
+  9.88487157   0.03143991   1.00882875   0.13927624   1.11320781   0.87318990   1.80410229 
+       Years       CAtBat        CHits       CHmRun        CRuns         CRBI       CWalks 
+  0.13074381   0.01113978   0.06489843   0.45158546   0.12900049   0.13737712   0.02908572 
+     LeagueN    DivisionW      PutOuts      Assists       Errors   NewLeagueN 
+ 27.18227535 -91.63411299   0.19149252   0.04254536  -1.81244470   7.21208390 
+
+# Apply the same above data and package to predict LASSO behaviour where alpha=1, lambda=grid
+> lasso.model = glmnet(x[train,], y[train], alpha = 1, lambda = grid)
+> set.seed(1)
+
+# Cross Validation to predict output difference against Response Y.TEST Column
+> cv.out=cv.glmnet(x[train,], y[train], alpha=1)
+> bestlam= cv.out$lambda.min
+> lasso.pred = predict(lasso.model, s= bestlam, newx=x[test,])
+> mean((lasso.pred-y.test)^2)
+[1] 100743.4
+
+# LASSO Model Coefficients variables are  zero 12/19 Predictors,  see this comparison with RIDGE Coefficients, here Lambda = bestlam, alpha =1 for LASSO
+# LASSO Play key role in bring down the coefficients, which helps to take control on Variance-Bias Balance and give us a accurate prediction.
+
+> out = glmnet(x,y, alpha = 1, lambda = grid)
+> predict(out, type="coefficients", s=bestlam)[1:20,]
+ (Intercept)        AtBat         Hits        HmRun         Runs          RBI        Walks 
+  18.5394844    0.0000000    1.8735390    0.0000000    0.0000000    0.0000000    2.2178444 
+       Years       CAtBat        CHits       CHmRun        CRuns         CRBI       CWalks 
+   0.0000000    0.0000000    0.0000000    0.0000000    0.2071252    0.4130132    0.0000000 
+     LeagueN    DivisionW      PutOuts      Assists       Errors   NewLeagueN 
+   3.2666677 -103.4845458    0.2204284    0.0000000    0.0000000    0.0000000 
+
+> lasso.coef=predict(out, type="coefficients", s=bestlam)[1:20,]
+> lasso.coef[lasso.coef!=0]
+ (Intercept)         Hits        Walks        CRuns         CRBI      LeagueN    DivisionW 
+  18.5394844    1.8735390    2.2178444    0.2071252    0.4130132    3.2666677 -103.4845458 
+     PutOuts 
+   0.2204284 
+> 
+
