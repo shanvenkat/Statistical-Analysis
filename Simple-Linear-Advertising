@@ -1,8 +1,26 @@
 ###################################################################################
 R Code Samples for linear Regression and classification Models
+
+Notes#
+R2 is the square of the relation between variables and response
+
+- A model containing only TV had R2 as 0.61 Adding TV to that model increases 
+R2. A model that uses all three advertising media
+to predict sales has an R2 of 0.8972. On the other hand, the model that
+uses only TV and radio to predict sales has an R2 value of 0.89719.
+
+- A Model containing only TV and radio
+advertising leads to just a tiny increase in R2 provides additional evidence
+that newspaper can be dropped from the model
+
+- RSE would be 1.681 with the model of variables TV and Radio
+- RSE would be 1.686 with the model of TV, Radio and News Paper
+- RSE would be 3.26 with the model of TV only. above shows Model with TV + Radio would be best.
+
+2^P P - No of Predictors
+
 ##################################################################################
 
-Total Number of models = 2^P  (P - No of Predictors)
 
 # Load ISLR Library to have basic dataset
 library(ISLR)
@@ -316,27 +334,20 @@ Validation Results (1)
 [1] 19.82259
 [1] 19.78252
 
-
 > set.seed(2)
 > train=sample(392,196)
 > lm.fit=lm(Auto$mpg~Auto$horsepower, data=Auto, subset=train)
-> mean(Auto$mpg~predict(lm.fit, Auto)[-train]^2)
-[1] NA
-Warning message:
-In mean.default(Auto$mpg ~ predict(lm.fit, Auto)[-train]^2) :
-  argument is not numeric or logical: returning NA
-> mean((Auto$mpg~predict(lm.fit, Auto))[-train]^2)
-Error in (Auto$mpg ~ predict(lm.fit, Auto))[-train]^2 : 
-  non-numeric argument to binary operator
 > mean((Auto$mpg-predict(lm.fit, Auto))[-train]^2)
 [1] 23.29559
+
 > lm.fit2 =lm(Auto$mpg~poly(Auto$horsepower,2), data=Auto,subset = train)
 > mean((Auto$mpg-predict(lm.fit2, Auto))[-train]^2)
 [1] 18.90124
+
 > lm.fit3 =lm(Auto$mpg~poly(Auto$horsepower,3), data=Auto,subset = train)
 > mean((Auto$mpg-predict(lm.fit3, Auto))[-train]^2)
 [1] 19.2574
-> 
+
 
 Validation Results(2)
 [1] 23.29559
