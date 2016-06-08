@@ -1,7 +1,7 @@
 ###################################################################################
-Ridge and Lasso regression using GLMNET, MATRIX Package
+Ridge Regression and Lasso using GLMNET, MATRIX Package
 Ridge and lasso helps to reduce the variables coefficients to Zero.
-Ridge helps to reduce to low levelm but lasso helps to  reduce to zero level.
+Ridge helps to reduce to lower level of coefficients but lasso helps to  reduce to zero level.
 This reduction helps to handle Variance-bias relation in control, which helps to do accurate prediction
 Following Model applies to Hitters data set, 263 Observations and 20 Predictors
 ##################################################################################
